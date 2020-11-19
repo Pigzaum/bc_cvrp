@@ -1,0 +1,6 @@
+# Ignore everything in this directory
+*
+# Except this file and cfg file example
+!.gitignore
+!example.cfg
+!instances/

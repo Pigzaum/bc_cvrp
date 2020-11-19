@@ -1,0 +1,15 @@
+# Ignore vscode dir
+Makefile
+.vscode/
+*.o
+*.a
+*.sh
+*.lp
+*.bas
+*.out
+*.zip
+*.log
+/build/
+/bin/
+/output/
+.VSCodeCounter/
