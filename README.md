@@ -1,4 +1,4 @@
-# Vehicle routing problem (IRP) Branch-and-cut using CVRPSEP package
+# Vehicle routing problem (VRP) Branch-and-cut using CVRPSEP package
 
 A C++ implementation of the VRP Branch-and-cut using Gurobi's API and CVRPSEP package [[1](#references)].
 

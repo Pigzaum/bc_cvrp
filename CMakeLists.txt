@@ -39,10 +39,10 @@ include_directories(${GUROBI_INCLUDE_DIRS})
 set(SOURCES
     src/main.cpp
     src/config_parameters.cpp
+    src/init_grb_model.cpp
     src/instance.cpp
+    src/vrp_lp.cpp
     src/ext/loguru/loguru.cpp)
-    # src/init_grb_model.cpp
-    # src/irp_lp.cpp
     # src/callback/callback_sec.cpp
     # src/ext/cvrpsep/basegrph.cpp
     # src/ext/cvrpsep/capsep.cpp
@@ -60,10 +60,10 @@ set(SOURCES
 # list all header files here
 set(HEADERS
     include/config_parameters.hpp
+    include/init_grb_model.hpp
     include/instance.hpp
+    include/vrp_lp.hpp
     include/ext/loguru/loguru.hpp)
-    # include/init_grb_model.hpp
-    # include/irp_lp.hpp
     # include/callback/callback_sec.hpp
     # include/ext/cvrpsep/basegrph.h
     # include/ext/cvrpsep/capsep.h

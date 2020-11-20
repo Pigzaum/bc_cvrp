@@ -67,18 +67,18 @@ int main(int argc, char **argv)
     if (std::filesystem::is_directory(path))
     {
         /* execute in batch */
-    //     for (const auto &f : std::filesystem::directory_iterator(path))
-    //     {
-    //         RAW_LOG_F(INFO, "executing instance: %s", f.path().c_str());
+        for (const auto &f : std::filesystem::directory_iterator(path))
+        {
+            RAW_LOG_F(INFO, "executing instance: %s", f.path().c_str());
     //         // auto pInst = std::make_shared<Instance>(f.path());
     //         // buildNsolve(pInst, params);
     //         // RAW_LOG_F(INFO, std::string(80, '=').c_str());
-    //     }
+        }
     }
     else
     {
         /* single instance execution */
-    //     RAW_LOG_F(INFO, "executing instance: %s", path.c_str());
+        RAW_LOG_F(INFO, "executing instance: %s", path.c_str());
     //     // auto pInst = std::make_shared<Instance>(path);
     //     // buildNsolve(pInst, params);
     }
