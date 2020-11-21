@@ -37,6 +37,8 @@ public:
 
     struct model
     {
+        enum sec_opt {CON, STD, MTZ, CVRPSEP};
+        sec_opt sec_strategy;
         int K_;
     };
 
@@ -79,6 +81,8 @@ public:
      * @brief.
     */
     solver getSolverParams() const;
+
+    void setSolverLogFilePath(const std::string& logFile);
 
     /**
      * @brief Prints instance value.

@@ -22,6 +22,7 @@
 #include "gurobi_c++.h"
 
 #include "config_parameters.hpp"
+#include "callback/callback_sec.hpp"
 
 class Instance;
 
@@ -44,12 +45,15 @@ public:
      * @brief Constructs from an instance.
      * @param: const std::shared_ptr<const Instance>&: pointer to an instance.
     */
-    VrpLp(const std::shared_ptr<const Instance>& pInst);
+    VrpLp(const std::shared_ptr<const Instance>& pInst,
+          const ConfigParameters::model& params);
 
-    void solve();
+    bool solve(const ConfigParameters::solver& params);
 
-    void writeSolution(std::string path);
     void writeIis(std::string path);
+    void writeModel(std::string path);
+    void writeResultsJSON(std::string path);
+    void writeSolution(std::string path);
 
 private:
 
@@ -59,8 +63,11 @@ private:
     GRBEnv mEnv;
     GRBModel mModel;
     std::vector<std::vector<GRBVar>> m_y;
+    std::vector<std::vector<GRBVar>> m_u; // used by MTZ constraints
     std::vector<std::vector<std::vector<GRBVar>>> m_x;
     std::vector<GRBConstr> mConstrs;
+
+    CallbackSEC mCbSEC;
 };
 
 #endif // VRP_LP_HPP

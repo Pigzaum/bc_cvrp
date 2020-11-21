@@ -31,15 +31,19 @@ void buildNsolve(const std::shared_ptr<const Instance>& pInst,
 {
     pInst->show();
 
-    VrpLp vrpSolver(pInst);
-    vrpSolver.solve();
-
-    params.getSolverParams(); // TODO
-
-    // vrpSolver.writeResultsJSON(params.getOutputDir());
-    vrpSolver.writeSolution(params.getOutputDir());
+    VrpLp vrpSolver(pInst, params.getModelParams());
     // vrpSolver.writeModel(params.getOutputDir());
-    // vrpSolver.writeIis(params.getOutputDir());
+    bool solved = vrpSolver.solve(params.getSolverParams());
+
+    if (solved)
+    {
+        vrpSolver.writeResultsJSON(params.getOutputDir());
+        vrpSolver.writeSolution(params.getOutputDir());
+    }
+    else
+    {
+        vrpSolver.writeIis(params.getOutputDir());
+    }
 }
 
 
@@ -61,6 +65,7 @@ int main(int argc, char **argv)
         oss << params.getOutputDir() << "execution_" <<
             std::put_time(&tm, "%d_%m_%Y_%H_%M_%S") << ".log";
         loguru::add_file(oss.str().c_str(), Append, Verbosity_MAX);
+        params.setSolverLogFilePath(oss.str());
     }
 
     params.show();

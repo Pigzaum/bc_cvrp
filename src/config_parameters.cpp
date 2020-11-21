@@ -36,6 +36,7 @@ const std::string c_solver_show_log = "solver_show_log";
 const std::string c_solver_time_limit = "solver_time_limit";
 const std::string c_solver_nb_threads = "solver_nb_threads";
 const std::string c_K = "nb_vehicles";
+const std::string c_sec_strategy = "sec_strategy";
 
 /**
  * @brief Parse string to boolean.
@@ -64,6 +65,35 @@ std::size_t parseUint(const std::string &str)
     CHECK_F(val >= 0, "Input parameter: Invalid value");
 
     return static_cast<std::size_t>(val);
+}
+
+/**
+ * @brief.
+*/
+ConfigParameters::model::sec_opt parseSECOpt(const std::string &str)
+{
+    if (std::stoi(str) == 0)
+    {
+        return ConfigParameters::model::sec_opt::CON;
+    }
+    else if (std::stoi(str) == 1)
+    {
+        return ConfigParameters::model::sec_opt::STD;
+    }
+    else if (std::stoi(str) == 2)
+    {
+        return ConfigParameters::model::sec_opt::MTZ;
+    }
+    else if (std::stoi(str) == 3)
+    {
+        return ConfigParameters::model::sec_opt::CVRPSEP;
+    }
+    else
+    {
+        RAW_LOG_F(FATAL, "Configuration file: Invalid SEC option");
+    }
+
+    return ConfigParameters::model::sec_opt::STD; // to avoid warning
 }
 
 /**
@@ -151,6 +181,12 @@ ConfigParameters::solver ConfigParameters::getSolverParams() const
 }
 
 
+void ConfigParameters::setSolverLogFilePath(const std::string& logFile)
+{
+    mSolverParam.logFile_ = logFile;
+}
+
+
 void ConfigParameters::show() const
 {
     RAW_LOG_F(INFO, std::string(80, '-').c_str());
@@ -177,4 +213,5 @@ void ConfigParameters::setupParameters()
     mSolverParam.nbThreads_ = parseUint(mData[c_solver_nb_threads]);
     // ---- Model parameters ----
     mModelParam.K_ = std::stoi(mData[c_K]);
+    mModelParam.sec_strategy = parseSECOpt(mData[c_sec_strategy]);
 }

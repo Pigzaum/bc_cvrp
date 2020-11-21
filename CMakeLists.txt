@@ -41,20 +41,20 @@ set(SOURCES
     src/init_grb_model.cpp
     src/instance.cpp
     src/vrp_lp.cpp
-    src/ext/loguru/loguru.cpp)
-    # src/callback/callback_sec.cpp
-    # src/ext/cvrpsep/basegrph.cpp
-    # src/ext/cvrpsep/capsep.cpp
-    # src/ext/cvrpsep/cnstrmgr.cpp
-    # src/ext/cvrpsep/compcuts.cpp
-    # src/ext/cvrpsep/compress.cpp
-    # src/ext/cvrpsep/cutbase.cpp
-    # src/ext/cvrpsep/fcapfix.cpp
-    # src/ext/cvrpsep/grsearch.cpp
-    # src/ext/cvrpsep/memmod.cpp
-    # src/ext/cvrpsep/mxf.cpp
-    # src/ext/cvrpsep/sort.cpp
-    # src/ext/cvrpsep/strngcmp.cpp)
+    src/ext/loguru/loguru.cpp
+    src/callback/callback_sec.cpp
+    src/ext/cvrpsep/basegrph.cpp
+    src/ext/cvrpsep/capsep.cpp
+    src/ext/cvrpsep/cnstrmgr.cpp
+    src/ext/cvrpsep/compcuts.cpp
+    src/ext/cvrpsep/compress.cpp
+    src/ext/cvrpsep/cutbase.cpp
+    src/ext/cvrpsep/fcapfix.cpp
+    src/ext/cvrpsep/grsearch.cpp
+    src/ext/cvrpsep/memmod.cpp
+    src/ext/cvrpsep/mxf.cpp
+    src/ext/cvrpsep/sort.cpp
+    src/ext/cvrpsep/strngcmp.cpp)
 
 # list all header files here
 set(HEADERS
@@ -62,20 +62,20 @@ set(HEADERS
     include/init_grb_model.hpp
     include/instance.hpp
     include/vrp_lp.hpp
-    include/ext/loguru/loguru.hpp)
-    # include/callback/callback_sec.hpp
-    # include/ext/cvrpsep/basegrph.h
-    # include/ext/cvrpsep/capsep.h
-    # include/ext/cvrpsep/cnstrmgr.h
-    # include/ext/cvrpsep/compcuts.h
-    # include/ext/cvrpsep/compress.h
-    # include/ext/cvrpsep/cutbase.h
-    # include/ext/cvrpsep/fcapfix.h
-    # include/ext/cvrpsep/grsearch.h
-    # include/ext/cvrpsep/memmod.h
-    # include/ext/cvrpsep/mxf.h
-    # include/ext/cvrpsep/sort.h
-    # include/ext/cvrpsep/strngcmp.h)
+    include/ext/loguru/loguru.hpp
+    include/callback/callback_sec.hpp
+    include/ext/cvrpsep/basegrph.h
+    include/ext/cvrpsep/capsep.h
+    include/ext/cvrpsep/cnstrmgr.h
+    include/ext/cvrpsep/compcuts.h
+    include/ext/cvrpsep/compress.h
+    include/ext/cvrpsep/cutbase.h
+    include/ext/cvrpsep/fcapfix.h
+    include/ext/cvrpsep/grsearch.h
+    include/ext/cvrpsep/memmod.h
+    include/ext/cvrpsep/mxf.h
+    include/ext/cvrpsep/sort.h
+    include/ext/cvrpsep/strngcmp.h)
 
 # add the executable
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})

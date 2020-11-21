@@ -68,8 +68,8 @@ void variablesU(GRBModel& model,
  * @param:.
 */
 void singleVisitationConstrs(GRBModel& model,
-                             std::vector<std::vector<GRBVar>>& y,
                              std::vector<GRBConstr>& constrs,
+                             const std::vector<std::vector<GRBVar>>& y,
                              const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -80,8 +80,8 @@ void singleVisitationConstrs(GRBModel& model,
  * @param:.
 */
 void kVehiclesLeaveDepotConstr(GRBModel& model,
-                               std::vector<std::vector<GRBVar>>& y,
                                std::vector<GRBConstr>& constrs,
+                               const std::vector<std::vector<GRBVar>>& y,
                                const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -92,9 +92,9 @@ void kVehiclesLeaveDepotConstr(GRBModel& model,
  * @param:.
 */
 void degreeConstrs(GRBModel& model,
-                   std::vector<std::vector<GRBVar>>& y,
-                   std::vector<std::vector<std::vector<GRBVar>>>& x,
                    std::vector<GRBConstr>& constrs,
+                   const std::vector<std::vector<GRBVar>>& y,
+                   const std::vector<std::vector<std::vector<GRBVar>>>& x,
                    const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -105,23 +105,50 @@ void degreeConstrs(GRBModel& model,
  * @param:.
 */
 void vehicleCapacityConstrs(GRBModel& model,
-                            std::vector<std::vector<GRBVar>>& y,
                             std::vector<GRBConstr>& constrs,
+                            const std::vector<std::vector<GRBVar>>& y,
                             const std::shared_ptr<const Instance>& pInst);
 
 
 /**
- * @brief.
+ * @brief Route connectivity constraints for subtour elimination constraints.
  * @param:.
  * @param:.
  * @param:.
  * @param:.
 */
-void routeConnectivityConstrs(GRBModel& model,
-                              std::vector<std::vector<GRBVar>>& y,
-                              std::vector<std::vector<std::vector<GRBVar>>>& x,
-                              std::vector<GRBConstr>& constrs,
-                              const std::shared_ptr<const Instance>& pInst);
+void routeConnectivityConstrs(
+    GRBModel& model,
+    std::vector<GRBConstr>& constrs,
+    const std::vector<std::vector<GRBVar>>& y,
+    const std::vector<std::vector<std::vector<GRBVar>>>& x,
+    const std::shared_ptr<const Instance>& pInst);
+
+/**
+ * @brief Standard subtour elimination constraints (SEC).
+ * @param:.
+ * @param:.
+ * @param:.
+ * @param:.
+*/
+void subtourEliminationConstrs(
+    GRBModel& model,
+    std::vector<GRBConstr>& constrs,
+    const std::vector<std::vector<std::vector<GRBVar>>>& x,
+    const std::shared_ptr<const Instance>& pInst);
+
+/**
+ * @brief Miller-Tucker-Zemlin (MTZ) constraints.
+ * @param:.
+ * @param:.
+ * @param:.
+ * @param:.
+*/
+void MTZConstrs(GRBModel& model,
+                std::vector<GRBConstr>& constrs,
+                const std::vector<std::vector<GRBVar>>& u,
+                const std::vector<std::vector<std::vector<GRBVar>>>& x,
+                const std::shared_ptr<const Instance>& pInst);
 
 } // namespace init
 

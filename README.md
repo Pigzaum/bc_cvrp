@@ -1,6 +1,6 @@
 # Vehicle routing problem (VRP) Branch-and-cut using CVRPSEP package
 
-A C++ implementation of the VRP Branch-and-cut using Gurobi's API and CVRPSEP package [[1](#references)].
+A C++ implementation of the VRP [[1](#references)] Branch-and-cut using Gurobi's API and CVRPSEP package [[2](#references)].
 
 ## Prerequisites
 
@@ -38,4 +38,6 @@ See the "example.cfg" file at the "input" folder for an example of the input con
 
 ## References
 
-**[\[1\] J. Lysgaard, A.N. Letchford and R.W. Eglese. A New Branch-and-Cut Algorithm for the Capacitated Vehicle Routing Problem, Mathematical Programming, vol. 100 (2), pp. 423-445](https://pubsonline.informs.org/doi/10.1287/trsc.1060.0188)**
+**[\[1\] P. Toth and D. Vigo. The Vehicle Routing Problem, Discrete Mathematics and Applications, SIAM, 2002](https://epubs.siam.org/doi/book/10.1137/1.9780898718515)**
+
+**[\[2\] J. Lysgaard, A.N. Letchford and R.W. Eglese. A New Branch-and-Cut Algorithm for the Capacitated Vehicle Routing Problem, Mathematical Programming, vol. 100 (2), pp. 423-445](https://pubsonline.informs.org/doi/10.1287/trsc.1060.0188)**

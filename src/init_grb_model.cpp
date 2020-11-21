@@ -27,8 +27,8 @@
 namespace
 {
 
-std::pair<std::vector<int>, std::vector<int>> findSubsetS(const int idx,
-                                                          const int nbVertices)
+std::pair<std::vector<int>, std::vector<int>> findCutS(const int idx,
+                                                       const int nbVertices)
 {
     const int MAX_N = 30;
     CHECK_F(nbVertices <= MAX_N);
@@ -141,8 +141,8 @@ void init::variablesU(GRBModel& model,
 
 
 void init::singleVisitationConstrs(GRBModel& model,
-                                   std::vector<std::vector<GRBVar>>& y,
                                    std::vector<GRBConstr>& constrs,
+                                   const std::vector<std::vector<GRBVar>>& y,
                                    const std::shared_ptr<const Instance>& pInst)
 {
     RAW_LOG_F(INFO, "\tInitializing single visitation constraints...");
@@ -163,8 +163,8 @@ void init::singleVisitationConstrs(GRBModel& model,
 
 void init::kVehiclesLeaveDepotConstr(
     GRBModel& model,
-    std::vector<std::vector<GRBVar>>& y,
     std::vector<GRBConstr>& constrs,
+    const std::vector<std::vector<GRBVar>>& y,
     const std::shared_ptr<const Instance>& pInst)
 {
     RAW_LOG_F(INFO, "\tInitializing K vehicles leave depot constraints...");
@@ -183,9 +183,9 @@ void init::kVehiclesLeaveDepotConstr(
 
 void init::degreeConstrs(
     GRBModel& model,
-    std::vector<std::vector<GRBVar>>& y,
-    std::vector<std::vector<std::vector<GRBVar>>>& x,
     std::vector<GRBConstr>& constrs,
+    const std::vector<std::vector<GRBVar>>& y,
+    const std::vector<std::vector<std::vector<GRBVar>>>& x,
     const std::shared_ptr<const Instance>& pInst)
 {
     RAW_LOG_F(INFO, "\tInitializing degree constraints...");
@@ -218,8 +218,8 @@ void init::degreeConstrs(
 
 
 void init::vehicleCapacityConstrs(GRBModel& model,
-                                  std::vector<std::vector<GRBVar>>& y,
                                   std::vector<GRBConstr>& constrs,
+                                  const std::vector<std::vector<GRBVar>>& y,
                                   const std::shared_ptr<const Instance>& pInst)
 {
     RAW_LOG_F(INFO, "\tInitializing vehicle capacity constraints...");
@@ -241,9 +241,9 @@ void init::vehicleCapacityConstrs(GRBModel& model,
 
 void init::routeConnectivityConstrs(
     GRBModel& model,
-    std::vector<std::vector<GRBVar>>& y,
-    std::vector<std::vector<std::vector<GRBVar>>>& x,
     std::vector<GRBConstr>& constrs,
+    const std::vector<std::vector<GRBVar>>& y,
+    const std::vector<std::vector<std::vector<GRBVar>>>& x,
     const std::shared_ptr<const Instance>& pInst)
 {
     RAW_LOG_F(INFO, "\tInitializing route connectivity constraints...");
@@ -251,7 +251,7 @@ void init::routeConnectivityConstrs(
     const auto nbSets = std::pow(2, pInst->getNbVertices() - 1);
     for (int c = 1; c < nbSets; ++c)
     {
-        auto [inS, notInS] = findSubsetS(c, pInst->getNbVertices());
+        auto [inS, notInS] = findCutS(c, pInst->getNbVertices());
         for (int k = 0; k < pInst->getK(); ++k)
         {
             for (auto h : inS)
@@ -273,8 +273,86 @@ void init::routeConnectivityConstrs(
                 }
 
                 std::ostringstream oss;
-                oss << "5C_" << c << "_" << h << "_" << k;
+                oss << "5CA_" << c << "_" << h << "_" << k;
                 constrs.push_back(model.addConstr(e >= 2 * y[h][k], oss.str()));
+            }
+        }
+    }
+}
+
+
+void init::subtourEliminationConstrs(
+    GRBModel& model,
+    std::vector<GRBConstr>& constrs,
+    const std::vector<std::vector<std::vector<GRBVar>>>& x,
+    const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing SEC constraints...");
+
+    const auto nbSets = std::pow(2, pInst->getNbVertices() - 1);
+    for (int c = 1; c < nbSets; ++c)
+    {
+        auto S = findCutS(c, pInst->getNbVertices()).first;
+        if (S.size() > 1)
+        {
+            for (int k = 0; k < pInst->getK(); ++k)
+            {
+                GRBLinExpr lhs = 0;
+                for (auto i : S)
+                {
+                    for (auto j : S)
+                    {
+                        if (i == j) continue;
+
+                        if (i < j)
+                        {
+                            lhs += x[i][j][k];
+                        }
+                    }
+                }
+
+                GRBLinExpr rhs = S.size() - 1;
+
+                std::ostringstream oss;
+                oss << "5CB_" << c << "_" << k;
+                constrs.push_back(model.addConstr(lhs <= rhs, oss.str()));
+            }
+        }
+    }
+}
+
+
+void init::MTZConstrs(GRBModel& model,
+                      std::vector<GRBConstr>& constrs,
+                      const std::vector<std::vector<GRBVar>>& u,
+                      const std::vector<std::vector<std::vector<GRBVar>>>& x,
+                      const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing MTZ constraints...");
+
+    for (int i = 1; i < pInst->getNbVertices(); ++i)
+    {
+        for (int j = 1; j < pInst->getNbVertices(); ++j)
+        {
+            if (i == j) continue;
+
+            if (pInst->getdi(i) + pInst->getdi(j) <= pInst->getC())
+            {
+                for (int k = 0; k < pInst->getK(); ++k)
+                {
+                    GRBLinExpr lhs = u[i][k] - u[j][k];
+                    GRBLinExpr rhs = pInst->getC() - pInst->getdi(j);
+
+                    if (i < j)
+                    {
+                        lhs += pInst->getC() * x[i][j][k];
+
+                        std::ostringstream oss;
+                        oss << "5CC_" << i << "_" << j << "_" << k;
+                        constrs.push_back(model.addConstr(lhs <= rhs,
+                                                          oss.str()));
+                    }
+                }
             }
         }
     }

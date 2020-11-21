@@ -3,4 +3,4 @@
 # Except this file and cfg file example
 !.gitignore
 !example.cfg
-!instances/
+!instances/E-n13-k4.vrp

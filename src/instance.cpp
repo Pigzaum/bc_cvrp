@@ -248,13 +248,4 @@ void Instance::init()
     {
         mcij = computeDistances(coord);
     }
-
-    for (auto &r : mcij)
-    {
-        for (auto e : r)
-        {
-            std::cout << e << " ";
-        }
-        std::cout << "\n";
-    }
 }
