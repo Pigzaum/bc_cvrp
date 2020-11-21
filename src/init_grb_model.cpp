@@ -13,6 +13,8 @@
  */
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <bitset>
+#include <cmath>
 #include <sstream>
 
 #include "../include/ext/loguru/loguru.hpp"
@@ -20,12 +22,49 @@
 #include "../include/init_grb_model.hpp"
 #include "../include/instance.hpp"
 
+/////////////////////////////// Helper functions ///////////////////////////////
+
+namespace
+{
+
+std::pair<std::vector<int>, std::vector<int>> findSubsetS(const int idx,
+                                                          const int nbVertices)
+{
+    const int MAX_N = 30;
+    CHECK_F(nbVertices <= MAX_N);
+
+    std::vector<int> inS;
+    std::vector<int> notInS;
+    inS.reserve(nbVertices);
+    notInS.reserve(nbVertices);
+
+    std::bitset<MAX_N> myBitset(idx);
+    for (int i = 1; i < nbVertices; ++i)
+    {
+        if (myBitset[i - 1])
+        {
+            inS.push_back(i);
+        }
+        else
+        {
+            notInS.push_back(i);
+        }
+    }
+
+    notInS.push_back(0);
+
+    return std::make_pair(inS, notInS);
+}
+
+} // anonymous namespace
+
+////////////////////////////////////////////////////////////////////////////////
 
 void init::variablesY(GRBModel& model,
                       std::vector<std::vector<GRBVar>>& y,
                       const std::shared_ptr<const Instance>& pInst)
 {
-    RAW_LOG_F(INFO, "Initializing variables y...");
+    RAW_LOG_F(INFO, "\tInitializing variables y...");
 
     y.reserve(pInst->getNbVertices());
     for (int i = 0; i < pInst->getNbVertices(); ++i)
@@ -46,7 +85,7 @@ void init::variablesX(GRBModel& model,
                       std::vector<std::vector<std::vector<GRBVar>>>& x,
                       const std::shared_ptr<const Instance>& pInst)
 {
-    RAW_LOG_F(INFO, "Initializing variables x...");
+    RAW_LOG_F(INFO, "\tInitializing variables x...");
 
     x.reserve(pInst->getNbVertices());
     for (int i = 0; i < pInst->getNbVertices(); ++i)
@@ -66,8 +105,176 @@ void init::variablesX(GRBModel& model,
                 x[i][j][k] = model.addVar(0,
                                           (i == 0 ? 2 : 1),
                                           pInst->getcij(i, j),
-                                          GRB_BINARY,
+                                          GRB_INTEGER,
                                           oss.str());
+            }
+        }
+    }
+}
+
+
+void init::variablesU(GRBModel& model,
+                      std::vector<std::vector<GRBVar>>& u,
+                      const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing variables u...");
+
+    u.reserve(pInst->getNbVertices());
+    for (int i = 0; i < pInst->getNbVertices(); ++i)
+    {
+        u.push_back(std::vector<GRBVar>(pInst->getK()));
+
+        if (i == 0) continue;
+
+        for (int k = 0; k < pInst->getK(); ++k)
+        {
+            std::ostringstream oss;
+            oss << "u_" << i << "_" << k;
+            u[i][k] = model.addVar(pInst->getdi(i),
+                                   pInst->getC(),
+                                   0,
+                                   GRB_CONTINUOUS,
+                                   oss.str());
+        }
+    }
+}
+
+
+void init::singleVisitationConstrs(GRBModel& model,
+                                   std::vector<std::vector<GRBVar>>& y,
+                                   std::vector<GRBConstr>& constrs,
+                                   const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing single visitation constraints...");
+
+    for (int i = 1; i < pInst->getNbVertices(); ++i)
+    {
+        GRBLinExpr e = 0;
+        for (int k = 0; k < pInst->getK(); ++k)
+        {
+            e += y[i][k];
+        }
+        std::ostringstream oss;
+        oss << "1C_" << i;
+        constrs.push_back(model.addConstr(e == 1, oss.str()));
+    }
+}
+
+
+void init::kVehiclesLeaveDepotConstr(
+    GRBModel& model,
+    std::vector<std::vector<GRBVar>>& y,
+    std::vector<GRBConstr>& constrs,
+    const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing K vehicles leave depot constraints...");
+
+    GRBLinExpr e = 0;
+    for (int k = 0; k < pInst->getK(); ++k)
+    {
+        e += y[0][k];
+    }
+
+    std::ostringstream oss;
+    oss << "2C";
+    constrs.push_back(model.addConstr(e == pInst->getK(), oss.str()));
+}
+
+
+void init::degreeConstrs(
+    GRBModel& model,
+    std::vector<std::vector<GRBVar>>& y,
+    std::vector<std::vector<std::vector<GRBVar>>>& x,
+    std::vector<GRBConstr>& constrs,
+    const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing degree constraints...");
+
+    for (int i = 0; i < pInst->getNbVertices(); ++i)
+    {
+        for (int k = 0; k < pInst->getK(); ++k)
+        {
+            GRBLinExpr e = 0;
+            for (int j = 0; j < pInst->getNbVertices(); ++j)
+            {
+                if (i == j) continue;
+
+                if (i < j)
+                {
+                    e += x[i][j][k];
+                }
+                else
+                {
+                    e += x[j][i][k];
+                }
+            }
+
+            std::ostringstream oss;
+            oss << "3C_" << i << "_" << k;
+            constrs.push_back(model.addConstr(e == 2 * y[i][k], oss.str()));
+        }
+    }
+}
+
+
+void init::vehicleCapacityConstrs(GRBModel& model,
+                                  std::vector<std::vector<GRBVar>>& y,
+                                  std::vector<GRBConstr>& constrs,
+                                  const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing vehicle capacity constraints...");
+
+    for (int k = 0; k < pInst->getK(); ++k)
+    {
+        GRBLinExpr e = 0;
+        for (int i = 0; i < pInst->getNbVertices(); ++i)
+        {
+            e += pInst->getdi(i) * y[i][k];
+        }
+
+        std::ostringstream oss;
+        oss << "4C_" << k;
+        constrs.push_back(model.addConstr(e <= pInst->getC(), oss.str()));
+    }
+}
+
+
+void init::routeConnectivityConstrs(
+    GRBModel& model,
+    std::vector<std::vector<GRBVar>>& y,
+    std::vector<std::vector<std::vector<GRBVar>>>& x,
+    std::vector<GRBConstr>& constrs,
+    const std::shared_ptr<const Instance>& pInst)
+{
+    RAW_LOG_F(INFO, "\tInitializing route connectivity constraints...");
+
+    const auto nbSets = std::pow(2, pInst->getNbVertices() - 1);
+    for (int c = 1; c < nbSets; ++c)
+    {
+        auto [inS, notInS] = findSubsetS(c, pInst->getNbVertices());
+        for (int k = 0; k < pInst->getK(); ++k)
+        {
+            for (auto h : inS)
+            {
+                GRBLinExpr e = 0;
+                for (auto i : inS)
+                {
+                    for (auto j : notInS)
+                    {
+                        if (i < j)
+                        {
+                            e += x[i][j][k];
+                        }
+                        else
+                        {
+                            e += x[j][i][k];
+                        }
+                    }
+                }
+
+                std::ostringstream oss;
+                oss << "5C_" << c << "_" << h << "_" << k;
+                constrs.push_back(model.addConstr(e >= 2 * y[h][k], oss.str()));
             }
         }
     }

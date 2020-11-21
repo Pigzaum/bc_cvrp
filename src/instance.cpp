@@ -27,6 +27,11 @@
 namespace
 {
 
+/**
+ * @brief Computes the euclidian distance between every pair of vertices of the
+ * coordinates vector.
+ * @param:
+*/
 std::vector<std::vector<double>> computeDistances(
     const std::vector<std::pair<double, double>>& coord)
 {
@@ -47,15 +52,105 @@ std::vector<std::vector<double>> computeDistances(
     return cij;
 }
 
+/**
+ * @brief.
+*/
+std::vector<std::pair<double, double>> readCoordinates(
+    std::ifstream& file,
+    const int nbVertices)
+{
+    std::vector<std::pair<double, double>> coord;
+    coord.reserve(nbVertices);
+
+    int i = 0;
+    while (i < nbVertices)
+    {
+        std::string line;
+        std::getline(file, line);
+        std::istringstream iss(line);
+        double x, y;
+        iss >> x >> x >> y; // skip index
+        coord.push_back(std::make_pair(x, y));
+        ++i;
+    }
+
+    return coord;
+}
+
+/**
+ * @brief.
+*/
+std::vector<std::vector<double>> readCostMtx(
+    std::ifstream& file,
+    const int nbVertices)
+{
+    std::vector<std::vector<double>> cij(nbVertices,
+                                         std::vector<double>(nbVertices, 0));
+
+    int nbRows = std::ceil((std::pow(nbVertices, 2) - nbVertices) / 20);
+    int c = 0, i = 1, j = 0;
+    while (c < nbRows)
+    {
+        std::string line;
+        std::getline(file, line);
+        std::istringstream iss(line);
+        double w;
+        while (iss >> w)
+        {
+            if (j >= i)
+            {
+                j = 0;
+                ++i;
+            }
+            cij[i][j] = w;
+            cij[j][i] = w;
+            ++j;
+        }
+        ++c;
+    }
+
+    return cij;
+}
+
+/**
+ * @brief.
+*/
+std::vector<double> readDemands(std::ifstream& file, const int nbVertices)
+{
+    std::vector<double> demands;
+
+    int i = 0;
+    demands.reserve(nbVertices);
+    while (i < nbVertices)
+    {
+        std::string line;
+        std::getline(file, line);
+        std::istringstream iss(line);
+        double di;
+        iss >> di >> di; // skip index
+        demands.push_back(di);
+        ++i;
+    }
+
+    return demands;
+}
+
 } // anonymous namespace
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Instance::Instance(const std::string& file_path) :
-    mPath(file_path)
+Instance::Instance(const std::string& file_path, const int K) :
+    mPath(file_path),
+    mK(K)
 {
     CHECK_F(std::filesystem::exists(file_path), "invalid instance path");
     init();
+}
+
+
+std::string Instance::getName() const
+{
+    return std::filesystem::path(mPath).stem().string();
 }
 
 
@@ -91,61 +186,75 @@ double Instance::getdi(const int i) const
     return mdi[i];
 }
 
+
+void Instance::show() const
+{
+    // TODO
+}
+
 /*------------------------------ private methods -----------------------------*/
+
+#include <iostream>
 
 void Instance::init()
 {
     std::ifstream file(mPath);
     std::string line;
+    std::string edgeWeightType;
+
+    // (x, y) coordinates of the vertices
+    std::vector<std::pair<double, double>> coord;
 
     while (std::getline(file, line))
     {
-        auto tmp = line.substr(0, line.find_first_of(" ")); // label
+        std::istringstream iss(line);
+        std::string tmp;
+        iss >> tmp;
 
         if (tmp == "TYPE")
         {
-            tmp = line.substr(line.find_last_of(" ") + 1);
-            CHECK_F(tmp == "CVRP");
+            iss >> tmp >> tmp;
+            CHECK_F(tmp == "CVRP", "| %s", tmp.c_str());
         }
         else if (tmp == "DIMENSION")
         {
-            tmp = line.substr(line.find_last_of(" ") + 1);
+            iss >> tmp >> tmp;
             mNbVertices = stoi(tmp);
         }
         else if (tmp == "CAPACITY")
         {
-            tmp = line.substr(line.find_last_of(" ") + 1);
+            iss >> tmp >> tmp;
             mC = stoi(tmp);
+        }
+        else if (tmp == "EDGE_WEIGHT_TYPE")
+        {
+            iss >> edgeWeightType >> edgeWeightType;
         }
         else if (tmp == "NODE_COORD_SECTION")
         {
-            int i = 0;
-            mCoord.reserve(mNbVertices);
-            while (i < mNbVertices)
-            {
-                std::getline(file, line);
-                std::istringstream iss(line);
-                double x, y;
-                iss >> x >> x >> y; // skip index
-                mCoord.push_back(std::make_pair(x, y));
-                ++i;
-            }
+            coord = readCoordinates(file, mNbVertices);
+        }
+        else if (tmp == "EDGE_WEIGHT_SECTION")
+        {
+            mcij = readCostMtx(file, mNbVertices);
         }
         else if (tmp == "DEMAND_SECTION")
         {
-            int i = 0;
-            mdi.reserve(mNbVertices);
-            while (i < mNbVertices)
-            {
-                std::getline(file, line);
-                std::istringstream iss(line);
-                double di;
-                iss >> di >> di; // skip index
-                mdi.push_back(di);
-                ++i;
-            }
+            mdi = readDemands(file, mNbVertices);
         }
     }
 
-    mcij = computeDistances(mCoord);
+    if (edgeWeightType == "EUC_2D")
+    {
+        mcij = computeDistances(coord);
+    }
+
+    for (auto &r : mcij)
+    {
+        for (auto e : r)
+        {
+            std::cout << e << " ";
+        }
+        std::cout << "\n";
+    }
 }

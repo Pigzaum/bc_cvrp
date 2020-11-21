@@ -13,6 +13,7 @@
  */
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <filesystem>
 #include <sstream>
 
 #include "../include/ext/loguru/loguru.hpp"
@@ -21,6 +22,7 @@
 #include "../include/instance.hpp"
 #include "../include/init_grb_model.hpp"
 
+/////////////////////////////// Helper functions ///////////////////////////////
 
 namespace
 {
@@ -31,6 +33,7 @@ namespace
 void initModel(GRBModel& model,
                std::vector<std::vector<GRBVar>>& y,
                std::vector<std::vector<std::vector<GRBVar>>>& x,
+               std::vector<GRBConstr>& constrs,
                const std::shared_ptr<const Instance>& pInst)
 {
     RAW_LOG_F(INFO, "Building model...");
@@ -39,6 +42,12 @@ void initModel(GRBModel& model,
     {
         init::variablesY(model, y, pInst);
         init::variablesX(model, x, pInst);
+
+        init::singleVisitationConstrs(model, y, constrs, pInst);
+        init::kVehiclesLeaveDepotConstr(model, y, constrs, pInst);
+        init::degreeConstrs(model, y, x, constrs, pInst);
+        init::vehicleCapacityConstrs(model, y, constrs, pInst);
+        init::routeConnectivityConstrs(model, y, x, constrs, pInst);
     }
     catch (GRBException e)
     {
@@ -53,10 +62,83 @@ void initModel(GRBModel& model,
 
 } // anonymous namespace
 
+////////////////////////////////////////////////////////////////////////////////
 
 VrpLp::VrpLp(const std::shared_ptr<const Instance>& pInst) :
     mpInst(pInst),
     mModel(mEnv)
 {
-    initModel(mModel, m_y, m_x, mpInst);
+    initModel(mModel, m_y, m_x, mConstrs, mpInst);
+}
+
+
+void VrpLp::solve()
+{
+    RAW_LOG_F(INFO, "Solving VRP LP...\n");
+
+    try
+    {
+        // set solver parameters
+        // mModel.set(GRB_IntParam_OutputFlag, params.show_log);
+        // mModel.set(GRB_DoubleParam_TimeLimit, params.time_limit);
+        // mModel.set(GRB_IntParam_Threads, params.nb_threads);
+
+        mModel.optimize();
+
+        // if (mModel.get(GRB_IntAttr_Status) == GRB_OPTIMAL ||
+        //     mModel.get(GRB_IntAttr_Status) == GRB_TIME_LIMIT)
+        // {
+        //     solved = true;
+        // }
+    }
+    catch (GRBException& e)
+    {
+        RAW_LOG_F(FATAL, "VRP::solve(): error code: %d", e.getErrorCode());
+        RAW_LOG_F(FATAL, "VRP::solve(): C-Exp: %s", e.getMessage().c_str());
+    }
+    catch (...)
+    {
+        RAW_LOG_F(FATAL, "VRP::solve(): unknown Exception");
+    }
+}
+
+
+void VrpLp::writeIis(std::string path)
+{
+    DCHECK_F(std::filesystem::is_directory(path), "dir does not exists");
+    path += mpInst->getName() + "_vrp.ilp";
+
+    try
+    {
+        mModel.computeIIS();
+        mModel.write(path);
+    }
+    catch (GRBException& e)
+    {
+        RAW_LOG_F(ERROR, "writeIis() exp: %s", e.getMessage().c_str());
+    }
+    catch (...)
+    {
+        RAW_LOG_F(ERROR, "writeIis(): Unknown Exception");
+    }
+}
+
+
+void VrpLp::writeSolution(std::string path)
+{
+    DCHECK_F(std::filesystem::is_directory(path), "dir does not exists");
+    path += mpInst->getName() + ".sol";
+
+    try
+    {
+        mModel.write(path);
+    }
+    catch (GRBException& e)
+    {
+        RAW_LOG_F(ERROR, "writeSolution() exp: %s", e.getMessage().c_str());
+    }
+    catch (...)
+    {
+        RAW_LOG_F(ERROR, "writeSolution(): Unknown Exception");
+    }
 }

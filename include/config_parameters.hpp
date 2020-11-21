@@ -29,9 +29,10 @@ public:
     */
     struct solver
     {
-        bool show_log;          // print output parameters
-        std::size_t time_limit;  // time limit of the solver
-        std::size_t nb_threads; // # of threads used by solver
+        bool showLog_;          // print output parameters
+        std::size_t timeLimit_;  // time limit of the solver
+        std::size_t nbThreads_; // # of threads used by solver
+        std::string logFile_;
     };
 
     struct model

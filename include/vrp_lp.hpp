@@ -10,6 +10,7 @@
  * Created on November 1, 2020, 02:11 PM.
  * 
  * References:
+ * [1].
  */
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,8 @@
 #include <memory>
 
 #include "gurobi_c++.h"
+
+#include "config_parameters.hpp"
 
 class Instance;
 
@@ -43,6 +46,11 @@ public:
     */
     VrpLp(const std::shared_ptr<const Instance>& pInst);
 
+    void solve();
+
+    void writeSolution(std::string path);
+    void writeIis(std::string path);
+
 private:
 
     // pointer to instance
@@ -52,6 +60,7 @@ private:
     GRBModel mModel;
     std::vector<std::vector<GRBVar>> m_y;
     std::vector<std::vector<std::vector<GRBVar>>> m_x;
+    std::vector<GRBConstr> mConstrs;
 };
 
 #endif // VRP_LP_HPP

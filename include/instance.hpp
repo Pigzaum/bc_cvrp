@@ -37,8 +37,11 @@ public:
     /**
      * @brief Constructs from a instance file.
      * @param : const std::string&: instance file path.
+     * @param: const int: number of vehicles.
     */
-    Instance(const std::string& file_path);
+    Instance(const std::string& file_path, const int K);
+
+    std::string getName() const;
 
     int getNbVertices() const;
     int getK() const;
@@ -64,9 +67,6 @@ private:
 
     // vertices demand
     std::vector<double> mdi;
-
-    // (x, y) coordinates of the vertices
-    std::vector<std::pair<double, double>> mCoord;
 
     // distance matrix
     std::vector<std::vector<double>> mcij;

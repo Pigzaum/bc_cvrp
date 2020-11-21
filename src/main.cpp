@@ -2,7 +2,7 @@
 /*
  * File: main.cpp
  *
- * @brief Classic Inventory-Routing Problem (IRP) linear program [1].
+ * @brief Symmetric Capacitated Vehicle-Routing Problem (CVRP) linear program.
  * @author Guilherme O. Chagas (guilherme.o.chagas[a]gmail.com)
  * @date This file was created on October 22, 2020, 05:52 PM
  * @warning I'm sorry for my bad English xD.
@@ -23,22 +23,24 @@
 
 #include "../include/config_parameters.hpp"
 #include "../include/instance.hpp"
-// #include "../include/irp_lp.hpp"
+#include "../include/vrp_lp.hpp"
 
 
-// void buildNsolve(const std::shared_ptr<const Instance>& pInst,
-//                  const ConfigParameters& params)
-// {
-//     pInst->show();
+void buildNsolve(const std::shared_ptr<const Instance>& pInst,
+                 const ConfigParameters& params)
+{
+    pInst->show();
 
-//     Irp_lp irpSolver(pInst, params.getModelParams());
-//     irpSolver.solve(params.getSolverParams());
+    VrpLp vrpSolver(pInst);
+    vrpSolver.solve();
 
-//     irpSolver.writeResultsJSON(params.getOutputDir());
-//     irpSolver.writeSolution(params.getOutputDir());
-//     irpSolver.writeModel(params.getOutputDir());
-//     // irpSolver.writeIis(params.getOutputDir());
-// }
+    params.getSolverParams(); // TODO
+
+    // vrpSolver.writeResultsJSON(params.getOutputDir());
+    vrpSolver.writeSolution(params.getOutputDir());
+    // vrpSolver.writeModel(params.getOutputDir());
+    // vrpSolver.writeIis(params.getOutputDir());
+}
 
 
 int main(int argc, char **argv)
@@ -50,7 +52,7 @@ int main(int argc, char **argv)
     ConfigParameters params(argv[2]);
     std::filesystem::create_directory(params.getOutputDir());
 
-    /* Put every log message in "execution.log": */
+    /* Put every log message in the log file */
     {
         using namespace loguru;
         auto t = std::time(nullptr);
@@ -70,17 +72,21 @@ int main(int argc, char **argv)
         for (const auto &f : std::filesystem::directory_iterator(path))
         {
             RAW_LOG_F(INFO, "executing instance: %s", f.path().c_str());
-    //         // auto pInst = std::make_shared<Instance>(f.path());
-    //         // buildNsolve(pInst, params);
-    //         // RAW_LOG_F(INFO, std::string(80, '=').c_str());
+            auto pInst = std::make_shared<Instance>(f.path(),
+                                                    params.getModelParams().K_);
+            pInst->getNbVertices();
+            buildNsolve(pInst, params);
+            RAW_LOG_F(INFO, std::string(80, '=').c_str());
         }
     }
     else
     {
         /* single instance execution */
         RAW_LOG_F(INFO, "executing instance: %s", path.c_str());
-    //     // auto pInst = std::make_shared<Instance>(path);
-    //     // buildNsolve(pInst, params);
+        auto pInst = std::make_shared<Instance>(path,
+                                                params.getModelParams().K_);
+        pInst->getNbVertices();
+        buildNsolve(pInst, params);
     }
 
     return EXIT_SUCCESS;

@@ -172,9 +172,9 @@ void ConfigParameters::setupParameters()
     mInstancePath = mData[c_instance_path];
     mOutputDir = mData[c_output_dir];
     // ---- Solver parameters ----
-    mSolverParam.show_log = parseBool(mData[c_solver_show_log]);
-    mSolverParam.time_limit = parseUint(mData[c_solver_time_limit]);
-    mSolverParam.nb_threads = parseUint(mData[c_solver_nb_threads]);
+    mSolverParam.showLog_ = parseBool(mData[c_solver_show_log]);
+    mSolverParam.timeLimit_ = parseUint(mData[c_solver_time_limit]);
+    mSolverParam.nbThreads_ = parseUint(mData[c_solver_nb_threads]);
     // ---- Model parameters ----
     mModelParam.K_ = std::stoi(mData[c_K]);
 }
