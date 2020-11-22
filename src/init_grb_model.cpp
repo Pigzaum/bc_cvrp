@@ -197,13 +197,11 @@ void init::degreeConstrs(
             GRBLinExpr e = 0;
             for (int j = 0; j < pInst->getNbVertices(); ++j)
             {
-                if (i == j) continue;
-
                 if (i < j)
                 {
                     e += x[i][j][k];
                 }
-                else
+                else if (i > j)
                 {
                     e += x[j][i][k];
                 }
@@ -302,8 +300,6 @@ void init::subtourEliminationConstrs(
                 {
                     for (auto j : S)
                     {
-                        if (i == j) continue;
-
                         if (i < j)
                         {
                             lhs += x[i][j][k];
