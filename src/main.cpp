@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     CHECK_F(std::string(argv[1]) == "-f", "Unknown flag! Please see usage...");
 
     ConfigParameters params(argv[2]);
-    std::filesystem::create_directory(params.getOutputDir());
+    std::filesystem::create_directories(params.getOutputDir());
 
     /* Put every log message in the log file */
     {
