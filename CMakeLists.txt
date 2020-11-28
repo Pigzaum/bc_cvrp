@@ -2,9 +2,7 @@
 #   cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release [Debug]
 #   cmake --build build
 
-cmake_minimum_required(VERSION 3.10)
-
-set(CMAKE_CXX_COMPILER g++-10)
+cmake_minimum_required(VERSION 3.08)
 
 # set the project name and version
 project(vrp_solver VERSION 0.5.1)
