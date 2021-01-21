@@ -27,6 +27,8 @@ class CallbackSEC : public GRBCallback
 {
 public:
 
+    enum class constrsType {lazy, cut};
+
     CallbackSEC(const CallbackSEC& other) = default;
     CallbackSEC(CallbackSEC&& other) = default;
     ~CallbackSEC() = default;
@@ -50,9 +52,24 @@ private:
 
     void callback() override;
 
-    void addLazyCVRPSEP();
+    int addCVRPSEPCAP(const constrsType cstType);
 
-    void addCutCVRPSEP();
+    /**
+     * @brief Retrieve the x variables values from the relaxation solution at
+     * the current node.
+     * @param: constraint type.
+     * @return: x variables values at the current node.
+    */
+    std::vector<std::vector<std::vector<double>>> getxVarsValues(
+        const constrsType cstType);
+
+    /**
+     * @brief Retrieve the y variables values from the relaxation solution at
+     * the current node.
+     * @param: constraint type.
+     * @return: y variables values at the current node.
+    */
+    std::vector<std::vector<double>> getyVarsValues(const constrsType cstType);
 };
 
 #endif // CALLBACK_SEC_HPP

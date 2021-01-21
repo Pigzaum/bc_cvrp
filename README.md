@@ -1,6 +1,6 @@
-# Vehicle routing problem (VRP) Branch-and-cut using CVRPSEP package
+# Vehicle routing problem (VRP) Branch-and-cut algorithm using the CVRPSEP package
 
-A C++ implementation of the VRP [[1](#references)] Branch-and-cut using Gurobi's API and CVRPSEP package [[2](#references)].
+A C++ implementation of the VRP [[1](#references)] branch-and-cut algorithm using the Gurobi's API and CVRPSEP package [[2](#references)].
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ for the release version.
 To run with a configuration file:
 
 ```sh
-$ ./build/vrp_solver -f [configuration file path]
+$ ./build/bc_vrp -f [configuration file path]
 ```
 
 See the "example.cfg" file at the "input" folder for an example of the input configuration file.

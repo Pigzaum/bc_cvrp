@@ -194,8 +194,6 @@ void Instance::show() const
 
 /*------------------------------ private methods -----------------------------*/
 
-#include <iostream>
-
 void Instance::init()
 {
     std::ifstream file(mPath);

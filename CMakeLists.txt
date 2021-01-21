@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.08)
 
 # set the project name and version
-project(vrp_solver VERSION 0.5.1)
+project(bc_vrp VERSION 0.5.1)
 
 option(CXX "enable C++ compilation" ON)
 
@@ -39,8 +39,9 @@ set(SOURCES
     src/init_grb_model.cpp
     src/instance.cpp
     src/vrp_lp.cpp
-    src/ext/loguru/loguru.cpp
     src/callback/callback_sec.cpp
+    src/callback/cuts/cvrpsep.cpp
+    src/ext/loguru/loguru.cpp
     src/ext/cvrpsep/basegrph.cpp
     src/ext/cvrpsep/capsep.cpp
     src/ext/cvrpsep/cnstrmgr.cpp
@@ -60,8 +61,9 @@ set(HEADERS
     include/init_grb_model.hpp
     include/instance.hpp
     include/vrp_lp.hpp
-    include/ext/loguru/loguru.hpp
     include/callback/callback_sec.hpp
+    include/utils/constants.hpp
+    include/ext/loguru/loguru.hpp
     include/ext/cvrpsep/basegrph.h
     include/ext/cvrpsep/capsep.h
     include/ext/cvrpsep/cnstrmgr.h
