@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.08)
 
 # set the project name and version
-project(bc_vrp VERSION 0.5.1)
+project(bc_cvrp VERSION 0.5.1)
 
 option(CXX "enable C++ compilation" ON)
 
@@ -43,8 +43,10 @@ set(SOURCES
     src/callback/cuts/cvrpsep.cpp
     src/ext/loguru/loguru.cpp
     src/ext/cvrpsep/basegrph.cpp
+    src/ext/cvrpsep/blocks.cpp
     src/ext/cvrpsep/capsep.cpp
     src/ext/cvrpsep/cnstrmgr.cpp
+    src/ext/cvrpsep/combsep.cpp
     src/ext/cvrpsep/compcuts.cpp
     src/ext/cvrpsep/compress.cpp
     src/ext/cvrpsep/cutbase.cpp
@@ -53,7 +55,9 @@ set(SOURCES
     src/ext/cvrpsep/memmod.cpp
     src/ext/cvrpsep/mxf.cpp
     src/ext/cvrpsep/sort.cpp
-    src/ext/cvrpsep/strngcmp.cpp)
+    src/ext/cvrpsep/strcomb.cpp
+    src/ext/cvrpsep/strngcmp.cpp
+    src/ext/cvrpsep/twomatch.cpp)
 
 # list all header files here
 set(HEADERS
@@ -65,8 +69,10 @@ set(HEADERS
     include/utils/constants.hpp
     include/ext/loguru/loguru.hpp
     include/ext/cvrpsep/basegrph.h
+    include/ext/cvrpsep/blocks.h
     include/ext/cvrpsep/capsep.h
     include/ext/cvrpsep/cnstrmgr.h
+    include/ext/cvrpsep/combsep.h
     include/ext/cvrpsep/compcuts.h
     include/ext/cvrpsep/compress.h
     include/ext/cvrpsep/cutbase.h
@@ -75,7 +81,9 @@ set(HEADERS
     include/ext/cvrpsep/memmod.h
     include/ext/cvrpsep/mxf.h
     include/ext/cvrpsep/sort.h
-    include/ext/cvrpsep/strngcmp.h)
+    include/ext/cvrpsep/strcomb.h
+    include/ext/cvrpsep/strngcmp.h
+    include/ext/cvrpsep/twomatch.h)
 
 # add the executable
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
