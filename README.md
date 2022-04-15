@@ -2,12 +2,14 @@
 
 A C++ implementation of the CVRP three-index model [[1](#references)] branch-and-cut algorithm using the Gurobi's API and CVRPSEP package [[2](#references)].
 
-Let $G = (V, E)$ be an undirected graph, $K$ a set of vehicles with capacity of $Q$, and let vertex 0 be the depot and vertices $V' = V \setminus \{0\}$ be the customers. Consider that there is a demand $d_i$ for each $i \in V'$. The undirected three-index CVRP model can be defined as below [[1](#references)]:
+Let *G = (V, E)* be an undirected graph, *K* a set of vehicles with capacity of $Q$, and let vertex 0 be the depot and vertices *V' = V \setminus \{0\}* be the customers. Consider that there is a demand $d_i$ for each *i \in V'*. The undirected three-index CVRP model can be defined as below [[1](#references)]:
 
-$$
+![3-index-cvrp-model](./pictures/cvrp-3index.pdf)
+
+<!-- $$
   \begin{align}
     \min & \sum\limits_{(i, j) \in E} c_{ij} \sum\limits_{k \in K} x_{ij}^k \\
-    \text{subject to} & \nonumber \\
+    \text{subject to} & \\
     & \sum\limits_{k \in K} y_{i}^k = 1, & \forall i \in V', \\
     & \sum\limits_{k \in K} y_{0}^k = K, \\
     & \sum\limits_{(i, j) \in E} x_{ij}^k = 2y_i^k, & \forall i \in V, \forall k \in K, \\
@@ -17,7 +19,7 @@ $$
     & x_{ij}^{k} \in \{0, 1\}, & \forall i, j \in V', \forall k \in K,\\
     & x_{0j}^{k} \in \{0, 1 , 2\}, & \forall j \in V', \forall k \in K.
   \end{align}
-$$
+$$ -->
 
 ## Prerequisites
 
