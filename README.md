@@ -4,7 +4,7 @@ A C++ implementation of the CVRP three-index model [[1](#references)] branch-and
 
 Let *G = (V, E)* be an undirected graph, *K* a set of vehicles with capacity of $Q$, and let vertex 0 be the depot and vertices *V' = V \setminus \{0\}* be the customers. Consider that there is a demand $d_i$ for each *i \in V'*. The undirected three-index CVRP model can be defined as below [[1](#references)]:
 
-![3-index-cvrp-model](./pictures/cvrp-3index.pdf)
+![3-index-cvrp-model](./pictures/cvrp-3index.png)
 
 <!-- $$
   \begin{align}
