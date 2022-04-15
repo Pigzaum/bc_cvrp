@@ -353,3 +353,26 @@ void init::MTZConstrs(GRBModel& model,
         }
     }
 }
+
+
+void init::depotEdgesEqualsK(GRBModel& model,
+                             std::vector<GRBConstr>& constrs,
+                             const utils::Vec3D<GRBVar>& x,
+                             const std::shared_ptr<const Instance>& pInst)
+{
+    /* these constraints are necessary to avoid CVRPSEP SEC rare bug. */
+    DRAW_LOG_F(INFO, "\tInitializing depot edges = K constraints...");
+
+    GRBLinExpr lhs = 0;
+    for (int j = 1; j < pInst->getNbVertices(); ++j)
+    {
+        for (int k = 0; k < pInst->getK(); ++k)
+        {
+            lhs += x[0][j][k];
+        }
+    }
+
+    std::ostringstream oss;
+    oss << "6C";
+    constrs.push_back(model.addConstr(lhs == 2 * pInst->getK(), oss.str()));
+}

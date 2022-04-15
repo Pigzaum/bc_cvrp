@@ -75,8 +75,12 @@ void initModel(GRBModel& model,
         case ConfigParameters::model::sec_opt::CVRPSEP :
         {
             RAW_LOG_F(INFO, "\tusing lazy and cut (CVRPSEP package)");
+
             model.set(GRB_IntParam_LazyConstraints, 1); // see [1]
             model.set(GRB_IntParam_PreCrush, 1); // see [2]
+
+            init::depotEdgesEqualsK(model, constrs, x, pInst); // to avoid bug
+
             pCbSEC = std::make_shared<CallbackSEC>(x, y, pInst);
             model.setCallback(pCbSEC.get());
             break;

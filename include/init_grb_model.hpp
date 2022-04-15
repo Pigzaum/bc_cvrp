@@ -152,6 +152,14 @@ void MTZConstrs(GRBModel& model,
                 const utils::Vec3D<GRBVar>& x,
                 const std::shared_ptr<const Instance>& pInst);
 
+/**
+ * @brief These constraints are necessary to avoid CVRPSEP SEC rare bug.
+ */
+void depotEdgesEqualsK(GRBModel& model,
+                       std::vector<GRBConstr>& constrs,
+                       const utils::Vec3D<GRBVar>& x,
+                       const std::shared_ptr<const Instance>& pInst);
+
 } // namespace init
 
 #endif // INIT_MODEL_HPP
