@@ -1,3 +1,4 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
@@ -20,11 +21,11 @@ void MXF_SetNodeListSize(MaxFlowPtr Ptr,
 void MXF_AddArc(MaxFlowPtr Ptr,
                 int Tail,
                 int Head,
-                int Capacity);
+                double Capacity);
 void MXF_ChgArcCap(MaxFlowPtr Ptr,
                    int Tail,
                    int Head,
-                   int Capacity);
+                   double Capacity);
 void MXF_CreateMates(MaxFlowPtr Ptr);
 
 void MXF_CreateArcMap(MaxFlowPtr Ptr);
@@ -33,7 +34,7 @@ void MXF_SolveMaxFlow(MaxFlowPtr Ptr,
                       char InitByZeroFlow,
                       int Source,
                       int Sink,
-                      int *CutValue,
+                      double *CutValue,
                       char GetSinkSide,
                       int *NodeListSize,
                       int *NodeList);
@@ -43,16 +44,16 @@ void MXF_GetNetworkSize(MaxFlowPtr Ptr,
                         int *Arcs);
 
 void MXF_GetCurrentFlow(MaxFlowPtr Ptr,
-                        int *ArcResidualCapacity,
-                        int *NodeExcess);
+                        double *ArcResidualCapacity,
+                        double *NodeExcess);
 
 void MXF_SetFlow(MaxFlowPtr Ptr,
-                 int *ArcResidualCapacity,
-                 int *NodeExcess);
+                 double *ArcResidualCapacity,
+                 double *NodeExcess);
 
 void MXF_ComputeGHCutTree(MaxFlowPtr Ptr,
                           int CenterNode,
-                          int *CutValue,
+                          double *CutValue,
                           int *NextOnPath);
 
 #endif

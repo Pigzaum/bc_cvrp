@@ -1,3 +1,4 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
@@ -27,7 +28,7 @@ void GRSEARCH_AddSet(ReachPtr RPtr,
 
 void GRSEARCH_CapCuts(ReachPtr SupportPtr,
                       int NoOfCustomers,
-                      int *Demand, int CAP,
+                      double *Demand, double CAP,
                       int *SuperNodeSize,
                       double *XInSuperNode,
                       double **XMatrix,
@@ -48,7 +49,7 @@ void GRSEARCH_CheckForExistingSet(ReachPtr RPtr,
 void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
                               int NoOfCustomers,
                               int ShrunkGraphCustNodes,
-                              int *SuperDemand, int CAP,
+                              double *SuperDemand, double CAP,
                               int *SuperNodeSize,
                               double *XInSuperNode,
                               ReachPtr SuperNodesRPtr,

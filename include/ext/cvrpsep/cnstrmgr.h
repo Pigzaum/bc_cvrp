@@ -1,11 +1,12 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
 
-#include <stdio.h> //Cleder (FILE)
-
 #ifndef _H_CNSTRMGR
 #define _H_CNSTRMGR
+
+#include <cstdio> // modified
 
 /* Definition of constants for identification of constraint types. */
 
@@ -117,3 +118,4 @@ void CMGR_SaveCMP(FILE *f, CnstrMgrPointer CMP,
 void CMGR_WriteCMP(CnstrMgrPointer CMP, int MinCNr);
 
 #endif
+

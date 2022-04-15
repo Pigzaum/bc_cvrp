@@ -1,13 +1,14 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <cassert>
 #include "../../../include/ext/cvrpsep/memmod.h"
 
-void* MemGet(int NoOfBytes)
+void* MemGet(long unsigned int NoOfBytes)
 {
   void *p;
   if ((p = malloc(NoOfBytes)) != NULL)
@@ -16,14 +17,15 @@ void* MemGet(int NoOfBytes)
   }
   else
   {
-    printf("*** MemGet(%d bytes)\n",NoOfBytes);
+    printf("*** MemGet(%lu bytes)\n",NoOfBytes);
     printf("*** Error in memory allocation\n");
-    exit(0);     /* Program stop. */
+    assert(0);
+    //exit(0);     /* Program stop. */
     return NULL; /* Never called, but avoids compiler warning. */
   }
 }
 
-void* MemReGet(void *p, int NewNoOfBytes)
+void* MemReGet(void *p, long unsigned int NewNoOfBytes)
 {
   if (p==NULL) return MemGet(NewNoOfBytes);
 
@@ -33,9 +35,10 @@ void* MemReGet(void *p, int NewNoOfBytes)
   }
   else
   {
-    printf("*** MemReGet(%d bytes)\n",NewNoOfBytes);
+    printf("*** MemReGet(%lu bytes)\n",NewNoOfBytes);
     printf("*** Error in memory allocation\n");
-    exit(0);     /* Program stop. */
+    assert(0);
+    //exit(0);     /* Program stop. */
     return NULL; /* Never called, but avoids compiler warning. */
   }
 }
@@ -50,7 +53,7 @@ void MemFree(void *p)
 
 char* MemGetCV(int n)
 {
-  return (char *) MemGet(sizeof(char)*n);
+   return (char *) MemGet(sizeof(char)*n);
 }
 
 char** MemGetCM(int Rows, int Cols)

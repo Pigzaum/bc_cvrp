@@ -1,10 +1,10 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
 
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "../../../include/ext/cvrpsep/memmod.h"
 #include "../../../include/ext/cvrpsep/basegrph.h"
 #include "../../../include/ext/cvrpsep/sort.h"
@@ -169,7 +169,7 @@ void GRSEARCH_GetNotOKSources(ReachPtr RPtr,
 
 void GRSEARCH_CapCuts(ReachPtr SupportPtr,
                       int NoOfCustomers,
-                      int *Demand, int CAP,
+                      double *Demand, double CAP,
                       int *SuperNodeSize,
                       double *XInSuperNode,
                       double **XMatrix,
@@ -184,7 +184,8 @@ void GRSEARCH_CapCuts(ReachPtr SupportPtr,
   int i,j,k;
   int Source,BestNode,NodeSum;
   int MinCandidateIdx,MaxCandidateIdx;
-  int MinV,CAPSum,DemandSum,NextVMinDemand,RHSMinV,RHSCapSum;
+  int MinV,RHSMinV;
+  double NextVMinDemand,CAPSum,DemandSum,RHSCapSum;
   int OrigNodesInSet; /* #Original nodes in set. */
   int CutsFromSource;
   int Label;
@@ -483,7 +484,7 @@ void GRSEARCH_CheckForExistingSet(ReachPtr RPtr,
 void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
                               int NoOfCustomers,
                               int ShrunkGraphCustNodes,
-                              int *SuperDemand, int CAP,
+                              double *SuperDemand, double CAP,
                               int *SuperNodeSize,
                               double *XInSuperNode,
                               ReachPtr SuperNodesRPtr,
@@ -497,8 +498,9 @@ void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
   char ListFound;
   int i,j,k,NodeIdx,MinXNode,BestNewNode,LoopNr;
   int CutNr,Label,CustNr,SListSize,InitListSize;
-  int DemandSum,CAPSum,MinV,CAPSumMinusCAP,NodeSum,CAPSlack;
-  int RemainingCAPSlack;
+  int MinV,NodeSum;
+  double DemandSum,CAPSumMinusCAP;
+  double RemainingCAPSlack,CAPSum,CAPSlack;
   int RemovedNodes,LastRemoved,AddedNodes;
   double XVal,XSumInSet,MinX,MaxX,XScore;
   double LHS,RHS,Violation;
@@ -537,7 +539,7 @@ void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
 
   for (i=1; i<=ShrunkGraphCustNodes; i++) SortIdx[i] = i;
 
-  SortIndexIVInc(SortIdx,SuperDemand,ShrunkGraphCustNodes);
+  SortIndexDVInc(SortIdx,SuperDemand,ShrunkGraphCustNodes);
 
   CMP = CMPSourceCutList;
 
@@ -602,6 +604,8 @@ void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
       }
     }
 
+    //InitViolation = XSumInSet + MinV - InitListSize;
+    
     RemovedNodes = 0;
     RemainingCAPSlack = CAPSlack;
     LastRemoved = 0;
@@ -662,6 +666,7 @@ void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
       }
 
       MinXNode = 0;
+      MinX     = 1.0e100;
 
       for (k=1; k<=CMP->CPL[CutNr]->IntListSize; k++)
       {
@@ -718,7 +723,7 @@ void GRSEARCH_AddDropCapsOnGS(ReachPtr SupportPtr, /* On GS */
 
       BestNewNode = 0;
       MinXNode = 0;
-      CustNr = 0;
+      CustNr = 0;      
       MinX = 2.1;
       MaxX = -0.1;
 

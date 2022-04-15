@@ -1,10 +1,10 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
 
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "../../../include/ext/cvrpsep/sort.h"
 #include "../../../include/ext/cvrpsep/cnstrmgr.h"
 #include "../../../include/ext/cvrpsep/memmod.h"
@@ -75,7 +75,11 @@ void CMGR_FreeMemCMgr(CnstrMgrPointer *CMP)
     if ((*CMP)->CPL[i]->IntList != NULL) MemFree((*CMP)->CPL[i]->IntList);
     if ((*CMP)->CPL[i]->ExtList != NULL) MemFree((*CMP)->CPL[i]->ExtList);
     if ((*CMP)->CPL[i]->CList != NULL) MemFree((*CMP)->CPL[i]->CList);
-    MemFree((*CMP)->CPL[i]);
+   
+   //MVG 11/07/03
+    if ((*CMP)->CPL[i]->CoeffList != NULL) MemFree((*CMP)->CPL[i]->CoeffList);
+    if ((*CMP)->CPL[i]) MemFree((*CMP)->CPL[i]);
+    
   }
 
   MemFree((*CMP)->CPL);

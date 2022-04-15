@@ -1,3 +1,4 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
@@ -16,15 +17,15 @@ void CUTBASE_CompVehiclesForSet(int NoOfCustomers,
                                 char *NodeInSet,
                                 int *NodeList,
                                 int NodeListSize,
-                                int *Demand,
-                                int CAP,
+                                const double *Demand,
+                                double CAP,
                                 int *MinV);
 
 void CUTBASE_CompCapViolation(ReachPtr SupportPtr,
                               int NoOfCustomers,
                               char *NodeInSet,
                               int *NodeList, int NodeListSize,
-                              int *Demand, int CAP,
+                              const double *Demand, double CAP,
                               double **XMatrix,
                               double *Violation);
 

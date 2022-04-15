@@ -1,17 +1,19 @@
+/* SAS modified this file. */
 /* (C) Copyright 2003 Jens Lysgaard. All rights reserved. */
 /* OSI Certified Open Source Software */
 /* This software is licensed under the Common Public License Version 1.0 */
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <cassert>
+#include <float.h>
 #include "../../../include/ext/cvrpsep/mxf.h"
 #include "../../../include/ext/cvrpsep/memmod.h"
 
 typedef struct
 {
-  int R; /* Residual capacity of the arc */
-  int U; /* Capacity of the arc */
+  double R; /* Residual capacity of the arc */
+  double U; /* Capacity of the arc */
   int Tail;
   int Head;
   int Mate;
@@ -23,7 +25,7 @@ typedef MXF_ArcRec *MXF_ArcPtr;
 typedef struct
 {
   int DLabel;
-  int Excess;
+   double Excess;
   int FirstInArc;
   int LastInArc;
   int FirstOutArc;
@@ -70,7 +72,7 @@ void MXF_WriteArcList(MaxFlowPtr Ptr)
   printf(" Arc#    R    U Tail Head Mate NextOutArc NextInArc\n");
   printf("---------------------------------------------------\n");
   for (i=1; i<=P->ArcListSize; i++)
-  printf("%5d%5d%5d%5d%5d%5d%7d%10d\n",
+  printf("%5d%5g%5g%5d%5d%5d%7d%10d\n",
          i,
          P->ArcPtr[i].R,
          P->ArcPtr[i].U,
@@ -95,7 +97,7 @@ void MXF_WriteNodeList(MaxFlowPtr Ptr)
   printf("-----------------------------------------------------------------\n");
   for (i=1; i<=P->NodeListSize; i++)
   {
-    printf("%5d%5d%5d%5d%4d%6d%6d%6d%6d%6d%10d\n",
+    printf("%5d%4d%6g%6d%6d%6d%6d%10d%10d%10d%10d\n",
            i,
            P->NodePtr[i].DLabel,
            P->NodePtr[i].Excess,
@@ -237,7 +239,9 @@ void MXF_SetNodeListSize(MaxFlowPtr Ptr,
     printf("Insufficient memory allocated:\n");
     printf("MXF_SetNodeListSize: TotalNodes > NodeListDim (%d > %d)\n",
             TotalNodes,P->NodeListDim);
-    exit(0);
+    assert(0);
+    return;
+    //exit(0);
   }
 
   P->NodeListSize = TotalNodes;
@@ -246,11 +250,12 @@ void MXF_SetNodeListSize(MaxFlowPtr Ptr,
 void LMXF_AddArc(MaxFlowPtr Ptr,
                  int Tail,
                  int Head,
-                 int Capacity,
+                 double Capacity,
                  int *Index)
 {
-  int i,j,TotMem;
+  int i,j;
   MXF_Ptr P;
+  int64_t TotMem;
 
   P = (MXF_Ptr) Ptr;
 
@@ -260,7 +265,9 @@ void LMXF_AddArc(MaxFlowPtr Ptr,
   {
     printf("Error in input to MXF_AddArc(NodeListSize=%d)\n",
            P->NodeListSize);
-    exit(0);
+    //exit(0);
+    assert(0);
+    return;
   }
 
   i = P->ArcListSize + 1;
@@ -316,7 +323,7 @@ void LMXF_AddArc(MaxFlowPtr Ptr,
 void MXF_AddArc(MaxFlowPtr Ptr,
                 int Tail,
                 int Head,
-                int Capacity)
+                double Capacity)
 {
   int i;
   LMXF_AddArc(Ptr,Tail,Head,Capacity,&i);
@@ -325,9 +332,10 @@ void MXF_AddArc(MaxFlowPtr Ptr,
 void MXF_ChgArcCap(MaxFlowPtr Ptr,
                    int Tail,
                    int Head,
-                   int Capacity)
+                   double Capacity)
 {
-  int i,ArcNr,Delta;
+   int i,ArcNr;
+   double Delta;
   MXF_Ptr P;
 
   P = (MXF_Ptr) Ptr;
@@ -360,7 +368,9 @@ void MXF_ChgArcCap(MaxFlowPtr Ptr,
   {
     printf("MXF_ChgArcCap: Arc (%d,%d) not found => stop.\n",
             Tail,Head);
-    exit(0);
+    //exit(0);
+    assert(0);
+    return;
   }
 }
 
@@ -416,7 +426,9 @@ void MXF_ComputeDLabels(MaxFlowPtr Ptr,
       (Sink<=0) || (Sink>P->NodeListSize))
   {
     printf("Error in input to MXF_ComputeDLabels\n");
-    exit(0);
+    //exit(0);
+    assert(0);
+    return;
   }
 
   n = P->NodeListSize;
@@ -598,7 +610,8 @@ void LMXF_GetCurrentArc(MXF_Ptr P,
 void LMXF_Push(MXF_Ptr P,
                int Arc)
 {
-  int Delta,Tail,Head,Mate;
+   double Delta;
+   int Tail,Head,Mate;
 
   Tail = P->ArcPtr[Arc].Tail;
   Head = P->ArcPtr[Arc].Head;
@@ -612,8 +625,10 @@ void LMXF_Push(MXF_Ptr P,
   P->NodePtr[Tail].Excess -= Delta;
   P->ArcPtr[Arc].R -= Delta;
 
-  P->NodePtr[Head].Excess += Delta;
-  P->ArcPtr[Mate].R += Delta;
+  if(P->NodePtr[Head].Excess < DBL_MAX)
+     P->NodePtr[Head].Excess += Delta;
+  if(P->ArcPtr[Mate].R < DBL_MAX)
+     P->ArcPtr[Mate].R += Delta;
 }
 
 void LMXF_ClearBucket(MXF_Ptr P)
@@ -722,14 +737,15 @@ void MXF_SolveMaxFlow(MaxFlowPtr Ptr,
                       char InitByZeroFlow,
                       int Source,
                       int Sink,
-                      int *CutValue,
+                      double *CutValue,
                       char GetSinkSide,
                       int *NodeListSize,
                       int *NodeList)
 {
   /* CreateMates must be called before calling this routine */
   char InsertHead;
-  int i,j,n,Node,Tail,Head,Mate,NextInDList,Size,Delta;
+  int i,j,n,Node,Tail,Head,Mate,NextInDList,Size;
+  double Delta;
   int Arc;
   int DLabel,MinLabel,Level,CurrentLevel,ReLabels,ReLabelsLimit;
   MXF_Ptr P;
@@ -1005,8 +1021,8 @@ void MXF_GetNetworkSize(MaxFlowPtr Ptr,
 }
 
 void MXF_GetCurrentFlow(MaxFlowPtr Ptr,
-                        int *ArcResidualCapacity,
-                        int *NodeExcess)
+                        double *ArcResidualCapacity,
+                        double *NodeExcess)
 {
   int i;
   MXF_Ptr P;
@@ -1021,8 +1037,8 @@ void MXF_GetCurrentFlow(MaxFlowPtr Ptr,
 }
 
 void MXF_SetFlow(MaxFlowPtr Ptr,
-                 int *ArcResidualCapacity,
-                 int *NodeExcess)
+                 double *ArcResidualCapacity,
+                 double *NodeExcess)
 {
   int i;
   MXF_Ptr P;
@@ -1038,11 +1054,12 @@ void MXF_SetFlow(MaxFlowPtr Ptr,
 
 void MXF_ComputeGHCutTree(MaxFlowPtr Ptr,
                           int CenterNode,
-                          int *CutValue,
+                          double *CutValue,
                           int *NextOnPath)
 {
   char Shift;
-  int i,j,n,Source,Sink,CutVal,SourceSideSize,SinkNeighbor;
+  int i,j,n,Source,Sink,SourceSideSize,SinkNeighbor;
+  double CutVal;
   int *SourceSide;
   MXF_Ptr P;
 
