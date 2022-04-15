@@ -1,6 +1,10 @@
 # Capacitated Vehicle routing problem (CVRP) Branch-and-cut algorithm using the CVRPSEP package
 
-A C++ implementation of the CVRP three-index model [[1](#references)] branch-and-cut algorithm using the Gurobi's API and CVRPSEP package [[2](#references)].
+A C++ implementation of the CVRP undirected 3-index model [[1](#references)] branch-and-cut algorithm using GUROBI's API and CVRPSEP package [[2](#references)].
+
+Note: in this code it is used [this fork](https://github.com/sassoftware/cvrpsep) of the CVRPSEP package which fixes some minor issues. Please refer to [[3](#references)] for further details.
+
+## CVRP undirected 3-index formulation
 
 Let *G = (V, E)* be an undirected graph, *K* a set of vehicles with capacity of *Q*, and let vertex 0 be the depot and vertices *V' = V \ \{0\}* be the customers. Consider that there is a demand *di* for each *i in V'*. The undirected three-index CVRP model can be defined as below [[1](#references)]:
 
@@ -70,3 +74,5 @@ to see usage.
 **[\[1\] P. Toth and D. Vigo. The Vehicle Routing Problem, Discrete Mathematics and Applications, SIAM, 2002](https://epubs.siam.org/doi/book/10.1137/1.9780898718515)**
 
 **[\[2\] J. Lysgaard, A.N. Letchford and R.W. Eglese. A New Branch-and-Cut Algorithm for the Capacitated Vehicle Routing Problem, Mathematical Programming, vol. 100 (2), pp. 423-445](https://pubsonline.informs.org/doi/10.1287/trsc.1060.0188)**
+
+**[\[3\] CVRPSEP package SAS software repository.](https://github.com/sassoftware/cvrpsep)**
