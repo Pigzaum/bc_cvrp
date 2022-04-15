@@ -22,8 +22,9 @@
 #include "gurobi_c++.h"
 
 #include "config_parameters.hpp"
-#include "callback/callback_sec.hpp"
+#include "utils/multi_vector.hpp"
 
+class CallbackSEC;
 class Instance;
 
 class VrpLp
@@ -62,12 +63,12 @@ private:
 
     GRBEnv mEnv;
     GRBModel mModel;
-    std::vector<std::vector<GRBVar>> m_y;
-    std::vector<std::vector<GRBVar>> m_u; // used by MTZ constraints
-    std::vector<std::vector<std::vector<GRBVar>>> m_x;
+    utils::Vec2D<GRBVar> m_y;
+    utils::Vec2D<GRBVar> m_u; // used by MTZ constraints
+    utils::Vec3D<GRBVar> m_x;
     std::vector<GRBConstr> mConstrs;
 
-    CallbackSEC mCbSEC;
+    std::shared_ptr<CallbackSEC> mpCbSEC;
 };
 
 #endif // VRP_LP_HPP

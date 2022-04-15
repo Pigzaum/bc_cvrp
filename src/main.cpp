@@ -24,18 +24,20 @@
 #include "../include/config_parameters.hpp"
 #include "../include/instance.hpp"
 #include "../include/vrp_lp.hpp"
+#include "../include/utils/helper.hpp"
 
 
-void buildNsolve(const std::shared_ptr<const Instance>& pInst,
+void buildNsolve(const std::string& path,
                  const ConfigParameters& params)
 {
+    RAW_LOG_F(INFO, "executing instance: %s", path.c_str());
+
+    auto pInst = std::make_shared<Instance>(path, params.getModelParams().K_);
     pInst->show();
 
     VrpLp vrpSolver(pInst, params.getModelParams());
-    // vrpSolver.writeModel(params.getOutputDir());
-    bool solved = vrpSolver.solve(params.getSolverParams());
 
-    if (solved)
+    if (vrpSolver.solve(params.getSolverParams()))
     {
         vrpSolver.writeResultsJSON(params.getOutputDir());
         vrpSolver.writeSolution(params.getOutputDir());
@@ -49,11 +51,9 @@ void buildNsolve(const std::shared_ptr<const Instance>& pInst,
 
 int main(int argc, char **argv)
 {
+    ConfigParameters params(utils::helper::parseCmdLine(argc, argv));
     loguru::init(argc, argv);
-    CHECK_F(argc == 3, "Invalid number of parameters! Please see usage...");
-    CHECK_F(std::string(argv[1]) == "-f", "Unknown flag! Please see usage...");
 
-    ConfigParameters params(argv[2]);
     std::filesystem::create_directories(params.getOutputDir());
 
     /* Put every log message in the log file */
@@ -76,22 +76,14 @@ int main(int argc, char **argv)
         /* execute in batch */
         for (const auto &f : std::filesystem::directory_iterator(path))
         {
-            RAW_LOG_F(INFO, "executing instance: %s", f.path().c_str());
-            auto pInst = std::make_shared<Instance>(f.path(),
-                                                    params.getModelParams().K_);
-            pInst->getNbVertices();
-            buildNsolve(pInst, params);
+            buildNsolve(f.path(), params);
             RAW_LOG_F(INFO, std::string(80, '=').c_str());
         }
     }
     else
     {
         /* single instance execution */
-        RAW_LOG_F(INFO, "executing instance: %s", path.c_str());
-        auto pInst = std::make_shared<Instance>(path,
-                                                params.getModelParams().K_);
-        pInst->getNbVertices();
-        buildNsolve(pInst, params);
+        buildNsolve(path, params);
     }
 
     return EXIT_SUCCESS;

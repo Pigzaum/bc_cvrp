@@ -22,6 +22,7 @@
 #include "gurobi_c++.h"
 
 #include "../instance.hpp"
+#include "../utils/multi_vector.hpp"
 
 class CallbackSEC : public GRBCallback
 {
@@ -37,16 +38,16 @@ public:
     CallbackSEC& operator=(const CallbackSEC& other) = delete;
     CallbackSEC& operator=(CallbackSEC&& other) = delete;
 
-    CallbackSEC(const std::vector<std::vector<std::vector<GRBVar>>>& x,
-                const std::vector<std::vector<GRBVar>>& y,
+    CallbackSEC(const utils::Vec3D<GRBVar>& x,
+                const utils::Vec2D<GRBVar> & y,
                 const std::shared_ptr<const Instance>& p_inst);
 
 private:
 
     // equal to one if j immediately follows i in the route traveled at time t
-    const std::vector<std::vector<std::vector<GRBVar>>>& m_x;
+    const utils::Vec3D<GRBVar>& mr_x;
     // retailer i is served at time t
-    const std::vector<std::vector<GRBVar>>& m_y;
+    const utils::Vec2D<GRBVar> & mr_y;
 
     std::shared_ptr<const Instance> mpInst;
 

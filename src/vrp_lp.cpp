@@ -10,6 +10,8 @@
  * Created on November 1, 2020, 03:59 PM.
  * 
  * References:
+ * [1] https://bit.ly/2Kcnm6C
+ * [2] https://bit.ly/2N6iMbl
  */
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +23,7 @@
 #include "../include/vrp_lp.hpp"
 #include "../include/instance.hpp"
 #include "../include/init_grb_model.hpp"
+#include "../include/callback/callback_sec.hpp"
 
 /////////////////////////////// Helper functions ///////////////////////////////
 
@@ -31,11 +34,11 @@ namespace
  * @brief.
 */
 void initModel(GRBModel& model,
-               std::vector<std::vector<GRBVar>>& y,
-               std::vector<std::vector<GRBVar>>& u,
-               std::vector<std::vector<std::vector<GRBVar>>>& x,
+               utils::Vec2D<GRBVar>& y,
+               utils::Vec2D<GRBVar>& u,
+               utils::Vec3D<GRBVar>& x,
                std::vector<GRBConstr>& constrs,
-               CallbackSEC &CbSEC,
+               std::shared_ptr<CallbackSEC> &pCbSEC,
                const std::shared_ptr<const Instance>& pInst,
                const ConfigParameters::model& params)
 {
@@ -60,7 +63,7 @@ void initModel(GRBModel& model,
         }
         case ConfigParameters::model::sec_opt::STD :
         {
-            init::subtourEliminationConstrs(model,constrs, x, pInst);
+            init::subtourEliminationConstrs(model, constrs, x, pInst);
             break;
         }
         case ConfigParameters::model::sec_opt::MTZ :
@@ -72,8 +75,10 @@ void initModel(GRBModel& model,
         case ConfigParameters::model::sec_opt::CVRPSEP :
         {
             RAW_LOG_F(INFO, "\tusing lazy and cut (CVRPSEP package)");
-            model.set(GRB_IntParam_LazyConstraints, 1);
-            model.setCallback(&CbSEC);
+            model.set(GRB_IntParam_LazyConstraints, 1); // see [1]
+            model.set(GRB_IntParam_PreCrush, 1); // see [2]
+            pCbSEC = std::make_shared<CallbackSEC>(x, y, pInst);
+            model.setCallback(pCbSEC.get());
             break;
         }
         }
@@ -97,9 +102,9 @@ VrpLp::VrpLp(const std::shared_ptr<const Instance>& pInst,
              const ConfigParameters::model& params) :
     mpInst(pInst),
     mModel(mEnv),
-    mCbSEC(m_x, m_y, pInst)
+    mpCbSEC(nullptr)
 {
-    initModel(mModel, m_y, m_u, m_x, mConstrs, mCbSEC, mpInst, params);
+    initModel(mModel, m_y, m_u, m_x, mConstrs, mpCbSEC, mpInst, params);
 }
 
 

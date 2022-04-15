@@ -200,7 +200,7 @@ void Instance::init()
     std::string line;
     std::string edgeWeightType;
 
-    // (x, y) coordinates of the vertices
+    /* (x, y) coordinates of the vertices */
     std::vector<std::pair<double, double>> coord;
 
     while (std::getline(file, line))

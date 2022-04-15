@@ -1,0 +1,26 @@
+////////////////////////////////////////////////////////////////////////////////
+/*
+ * File: cmake_config.hpp
+ * Author: Guilherme O. Chagas
+ *
+ * @brief Cmake configuration information template.
+ *
+ * (I'm sorry for my bad english xD)
+ *
+ * Created on April 5, 2021, 02:27 PM
+ * 
+ * References:
+ * [1] https://bit.ly/3t4N8v3
+ */
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef CMAKE_CONFIG_HPP_IN
+#define CMAKE_CONFIG_HPP_IN
+
+#define PROJECT_NAME "@PROJECT_NAME@"
+#define PROJECT_VER  "@PROJECT_VERSION@"
+#define PROJECT_VER_MAJOR "@PROJECT_VERSION_MAJOR@"
+#define PROJECT_VER_MINOR "@PROJECT_VERSION_MINOR@"
+#define PTOJECT_VER_PATCH "@PROJECT_VERSION_PATCH@"
+
+#endif // CMAKE_CONFIG_HPP_IN

@@ -21,6 +21,8 @@
 
 #include "gurobi_c++.h"
 
+#include "utils/multi_vector.hpp"
+
 class Instance;
 
 namespace init
@@ -30,11 +32,11 @@ namespace init
  * @brief Variable y_ik takes value 1 if customer i is served by vehicle k and
  * 0 otherwise.
  * @param: GRBModel&:.
- * @param: std::vector<std::vector<GRBVar>>&:.
+ * @param: utils::Vec2D<GRBVar>&:.
  * @param: const std::shared_ptr<const Instance>&:.
 */
 void variablesY(GRBModel& model,
-                std::vector<std::vector<GRBVar>>& y,
+                utils::Vec2D<GRBVar>& y,
                 const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -45,7 +47,7 @@ void variablesY(GRBModel& model,
  * @param:.
 */
 void variablesX(GRBModel& model,
-                std::vector<std::vector<std::vector<GRBVar>>>& x,
+                utils::Vec3D<GRBVar>& x,
                 const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -56,7 +58,7 @@ void variablesX(GRBModel& model,
  * @param:.
 */
 void variablesU(GRBModel& model,
-                std::vector<std::vector<GRBVar>>& u,
+                utils::Vec2D<GRBVar>& u,
                 const std::shared_ptr<const Instance>& pInst);
 
 
@@ -69,7 +71,7 @@ void variablesU(GRBModel& model,
 */
 void singleVisitationConstrs(GRBModel& model,
                              std::vector<GRBConstr>& constrs,
-                             const std::vector<std::vector<GRBVar>>& y,
+                             const utils::Vec2D<GRBVar>& y,
                              const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -81,7 +83,7 @@ void singleVisitationConstrs(GRBModel& model,
 */
 void kVehiclesLeaveDepotConstr(GRBModel& model,
                                std::vector<GRBConstr>& constrs,
-                               const std::vector<std::vector<GRBVar>>& y,
+                               const utils::Vec2D<GRBVar>& y,
                                const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -93,8 +95,8 @@ void kVehiclesLeaveDepotConstr(GRBModel& model,
 */
 void degreeConstrs(GRBModel& model,
                    std::vector<GRBConstr>& constrs,
-                   const std::vector<std::vector<GRBVar>>& y,
-                   const std::vector<std::vector<std::vector<GRBVar>>>& x,
+                   const utils::Vec2D<GRBVar>& y,
+                   const utils::Vec3D<GRBVar>& x,
                    const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -106,7 +108,7 @@ void degreeConstrs(GRBModel& model,
 */
 void vehicleCapacityConstrs(GRBModel& model,
                             std::vector<GRBConstr>& constrs,
-                            const std::vector<std::vector<GRBVar>>& y,
+                            const utils::Vec2D<GRBVar>& y,
                             const std::shared_ptr<const Instance>& pInst);
 
 
@@ -120,8 +122,8 @@ void vehicleCapacityConstrs(GRBModel& model,
 void routeConnectivityConstrs(
     GRBModel& model,
     std::vector<GRBConstr>& constrs,
-    const std::vector<std::vector<GRBVar>>& y,
-    const std::vector<std::vector<std::vector<GRBVar>>>& x,
+    const utils::Vec2D<GRBVar>& y,
+    const utils::Vec3D<GRBVar>& x,
     const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -134,7 +136,7 @@ void routeConnectivityConstrs(
 void subtourEliminationConstrs(
     GRBModel& model,
     std::vector<GRBConstr>& constrs,
-    const std::vector<std::vector<std::vector<GRBVar>>>& x,
+    const utils::Vec3D<GRBVar>& x,
     const std::shared_ptr<const Instance>& pInst);
 
 /**
@@ -146,8 +148,8 @@ void subtourEliminationConstrs(
 */
 void MTZConstrs(GRBModel& model,
                 std::vector<GRBConstr>& constrs,
-                const std::vector<std::vector<GRBVar>>& u,
-                const std::vector<std::vector<std::vector<GRBVar>>>& x,
+                const utils::Vec2D<GRBVar>& u,
+                const utils::Vec3D<GRBVar>& x,
                 const std::shared_ptr<const Instance>& pInst);
 
 } // namespace init

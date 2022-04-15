@@ -29,6 +29,7 @@ namespace
 
 static const int cDim = 100; // ?
 static const int cMaxNbCapCuts = 8; // ?
+static const int cMaxNbCombCuts = 20;
 
 /**
  * @brief
@@ -41,10 +42,10 @@ int checkForDepot(const int i, const int n)
 /*
 * @brief
 */
-std::vector<int> getDemands(
+std::vector<double> getDemands(
     const std::shared_ptr<const Instance>& pInst)
 {
-    std::vector<int> demand(pInst->getNbVertices(), 0);
+    std::vector<double> demand(pInst->getNbVertices(), 0);
 
     for (std::size_t i = 1; i < demand.size(); ++i)
     {
@@ -74,7 +75,7 @@ std::tuple<int, std::vector<int>, std::vector<int>, std::vector<double>>
             }
         }
     }
-    
+
     std::vector<int> edgeTail;
     std::vector<int> edgeHead;
     std::vector<double> edgeX;
@@ -145,6 +146,7 @@ int CallbackSEC::addCVRPSEPCAP(const constrsType cstType)
                                myOldCutsCMP,
                                cMaxNbCapCuts,
                                utils::GRB_EPSILON,
+                               utils::GRB_EPSILON,
                                &integerAndFeasible,
                                &maxViolation,
                                cutsCMP);
@@ -169,11 +171,11 @@ int CallbackSEC::addCVRPSEPCAP(const constrsType cstType)
                     {
                         if (list[i] < list[j])
                         {
-                            xExpr += m_x[list[i]][list[j]][k];
+                            xExpr += mr_x[list[i]][list[j]][k];
                             xSum += xVal[list[i]][list[j]][k];
                         }
                     }
-                    yExpr += m_y[list[i]][k];
+                    yExpr += mr_y[list[i]][k];
                     ySum += yVal[list[i]][k];
                 }
 
@@ -181,13 +183,13 @@ int CallbackSEC::addCVRPSEPCAP(const constrsType cstType)
                 {
                     if (cstType == constrsType::lazy)
                     {
-                        addLazy(xExpr <= yExpr - m_y[list[i]][k]);
+                        addLazy(xExpr <= yExpr - mr_y[list[i]][k]);
                         ++nbAdded;
                     }
                     else if (xSum - ySum + yVal[list[i]][k] >
                              utils::GRB_EPSILON)
                     {
-                        addCut(xExpr <= yExpr - m_y[list[i]][k]);
+                        addCut(xExpr <= yExpr - mr_y[list[i]][k]);
                         ++nbAdded;
                     }
                 }

@@ -34,11 +34,11 @@ static const int C_EPS = 1e-5;
 ////////////////////////////////////////////////////////////////////////////////
 
 CallbackSEC::CallbackSEC(
-    const std::vector<std::vector<std::vector<GRBVar>>>& x,
-    const std::vector<std::vector<GRBVar>>& y,
+    const utils::Vec3D<GRBVar>& x,
+    const utils::Vec2D<GRBVar> & y,
     const std::shared_ptr<const Instance>& p_inst) :
-        m_x(x),
-        m_y(y),
+        mr_x(x),
+        mr_y(y),
         mpInst(p_inst)
 {}
 
@@ -85,16 +85,16 @@ std::vector<std::vector<std::vector<double>>>
         {
             for (int k = 0; k < mpInst->getK(); ++k)
             {
-                DCHECK_F(i < static_cast<int>(m_x.size()));
-                DCHECK_F(j < static_cast<int>(m_x[i].size()));
-                DCHECK_F(k < static_cast<int>(m_x[i][j].size()));
+                DCHECK_F(i < static_cast<int>(mr_x.size()));
+                DCHECK_F(j < static_cast<int>(mr_x[i].size()));
+                DCHECK_F(k < static_cast<int>(mr_x[i][j].size()));
                 if (cstType == constrsType::lazy)
                 {
-                    xVal[i][j][k] = getSolution(m_x[i][j][k]);
+                    xVal[i][j][k] = getSolution(mr_x[i][j][k]);
                 }
                 else
                 {
-                    xVal[i][j][k] = getNodeRel(m_x[i][j][k]);
+                    xVal[i][j][k] = getNodeRel(mr_x[i][j][k]);
                 }
             }
         }
@@ -115,15 +115,15 @@ std::vector<std::vector<double>> CallbackSEC::getyVarsValues(
     {
         for (int k = 0; k < mpInst->getK(); ++k)
         {
-            DCHECK_F(i < static_cast<int>(m_y.size()));
-            DCHECK_F(k < static_cast<int>(m_y[i].size()));
+            DCHECK_F(i < static_cast<int>(mr_y.size()));
+            DCHECK_F(k < static_cast<int>(mr_y[i].size()));
             if (cstType == constrsType::lazy)
             {
-                yVal[i][k] = getSolution(m_y[i][k]);
+                yVal[i][k] = getSolution(mr_y[i][k]);
             }
             else
             {
-                yVal[i][k] = getNodeRel(m_y[i][k]);
+                yVal[i][k] = getNodeRel(mr_y[i][k]);
             }
         }
     }
