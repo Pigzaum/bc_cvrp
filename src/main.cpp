@@ -3,7 +3,7 @@
  * File: main.cpp
  *
  * @brief Symmetric Capacitated Vehicle-Routing Problem (CVRP) linear program.
- * @author Guilherme O. Chagas (guilherme.o.chagas[a]gmail.com)
+ * @author Guilherme O. Chagas.
  * @date This file was created on October 22, 2020, 05:52 PM
  * @warning I'm sorry for my bad English xD.
  * @acknowledgment Special thanks to Ph.D. Leandro C. Coelho and Ph.D. Cleder
@@ -11,9 +11,8 @@
  * @copyright GNU General Public License.
  *
  * References:
- * [1] C. Archetti, L. Bertazzi, G. Laporte and M. G. Speranza. A Branch-and-Cut
- * Algorithm for a Vendor-Managed Inventory-Routing Problem. Transportation
- * Science, 41(3), 2007, pp. 382-391.
+ * [1] P. Toth and D. Vigo. The Vehicle Routing Problem, Discrete Mathematics
+ * and Applications, SIAM, 2002.
  */
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +61,7 @@ int main(int argc, char **argv)
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
         std::ostringstream oss;
-        oss << params.getOutputDir() << "execution_" <<
+        oss << params.getOutputDir() << "bc_cvrp_execution_" <<
             std::put_time(&tm, "%d_%m_%Y_%H_%M_%S") << ".log";
         loguru::add_file(oss.str().c_str(), Append, Verbosity_MAX);
         params.setSolverLogFilePath(oss.str());

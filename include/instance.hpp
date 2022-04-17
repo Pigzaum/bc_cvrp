@@ -65,7 +65,7 @@ private:
     // transportation capacity
     int mC;
 
-    int mCk; // homogeneous fleet
+    int mCk; // heterogeneous fleet
 
     // vertices demand
     std::vector<double> mdi;

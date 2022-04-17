@@ -23,7 +23,7 @@ namespace utils
 /**
  * @brief GUROBI's epsilon [1].
 */
-const static double GRB_EPSILON = 1e-6;
+const static double GRB_EPSILON = 1e-5;
 
 } // utils namespace
 
