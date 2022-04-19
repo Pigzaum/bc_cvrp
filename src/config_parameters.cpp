@@ -50,11 +50,30 @@ bool parseBool(const std::string &str)
 
 /**
  * @brief Parse string to unsigned int. It also checks if the input string is
+ * set to unlimited. If so, then parse to max value.
+ * @param: const std::string &: string to be parsed.
+ * @return: std::size_t: parsed value.
+*/
+int parseUint(const std::string &str)
+{
+    if (str == "unlimited")
+    {
+        return std::numeric_limits<int>::max();
+    }
+
+    int val = std::stoi(str);
+    CHECK_F(val >= 0, "Input parameter: Invalid value");
+
+    return static_cast<std::size_t>(val);
+}
+
+/**
+ * @brief Parse string to unsigned int. It also checks if the input string is
  * set to max. If so, then parse to max value.
  * @param: const std::string &: string to be parsed.
  * @return: std::size_t: parsed value.
 */
-std::size_t parseUint(const std::string &str)
+std::size_t parseNbThreads(const std::string &str)
 {
     if (str == "max")
     {
@@ -210,7 +229,7 @@ void ConfigParameters::setupParameters()
     // ---- Solver parameters ----
     mSolverParam.showLog_ = parseBool(mData[c_solver_show_log]);
     mSolverParam.timeLimit_ = parseUint(mData[c_solver_time_limit]);
-    mSolverParam.nbThreads_ = parseUint(mData[c_solver_nb_threads]);
+    mSolverParam.nbThreads_ = parseNbThreads(mData[c_solver_nb_threads]);
     // ---- Model parameters ----
     mModelParam.K_ = std::stoi(mData[c_K]);
     mModelParam.sec_strategy = parseSECOpt(mData[c_sec_strategy]);
