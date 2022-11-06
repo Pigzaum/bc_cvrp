@@ -6,13 +6,9 @@ Note: in this code it is used [this fork](https://github.com/sassoftware/cvrpsep
 
 ## CVRP undirected 3-index formulation
 
-Let *G = (V, E)* be an undirected graph, *K* a set of vehicles with capacity of *Q*, and let vertex 0 be the depot and vertices *V' = V \ \{0\}* be the customers. Consider that there is a demand *di* for each *i in V'*. The undirected three-index CVRP model can be defined as below [[1](#references)]:
+Let $G = (V, E)$ be an undirected graph, $K$ a set of vehicles with capacity of $Q$, and let vertex 0 be the depot and vertices $V' = V \setminus \{0\}$ be the customers. Consider that there is a demand $d_i$ for each $i \in V'$. The undirected three-index CVRP model can be defined as below [[1](#references)]:
 
-<p align="center">
-  <img src="./pictures/cvrp-3index.png" />
-</p>
-
-<!-- $$
+$$
   \begin{align}
     \min & \sum\limits_{(i, j) \in E} c_{ij} \sum\limits_{k \in K} x_{ij}^k \\
     \text{subject to} & \\
@@ -25,7 +21,7 @@ Let *G = (V, E)* be an undirected graph, *K* a set of vehicles with capacity of 
     & x_{ij}^{k} \in \{0, 1\}, & \forall i, j \in V', \forall k \in K,\\
     & x_{0j}^{k} \in \{0, 1 , 2\}, & \forall j \in V', \forall k \in K.
   \end{align}
-$$ -->
+$$
 
 ## Prerequisites
 
